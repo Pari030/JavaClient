@@ -1,6 +1,6 @@
 package me.pari;
 
-import me.pari.connection.Client;
+import me.pari.api.Client;
 import me.pari.connection.Message;
 import me.pari.connection.Response;
 import me.pari.connection.Status;
@@ -23,17 +23,18 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JLabel activeUsersLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    // private javax.swing.JButton logOutButton;
+    private javax.swing.JButton logOutButton;
     private javax.swing.JList<String> messageList;
     private DefaultListModel<String> messageListModel = new DefaultListModel<>();
     private javax.swing.JButton sendMessageButton;
     private javax.swing.JTextField sendMessageField;
     private Client client;
-    private final Settings settings;
+    private Settings settings;
 
     public App(@NotNull Settings settings) {
         initComponents();
 
+        /*
         // Get server info by settings
         this.settings = settings;
         String hostname = settings.getHostName();
@@ -72,9 +73,6 @@ public class App extends javax.swing.JFrame {
 
         } while (client == null);
 
-        // Get all data from socket and put in responses
-        new Thread(() -> client.responseUpdater()).start();
-
         // Get user info
         String username = settings.getUsername();
         String authToken = settings.getAuthToken();
@@ -92,10 +90,11 @@ public class App extends javax.swing.JFrame {
         client.startUpdater(settings);
 
         // New messages updater
-        new Thread(this::messageUpdater).start();
+        new Thread(this::messageUpdater).start();*/
     }
 
     private void messageUpdater() {
+        /*
         while (!client.isClosed()) {
 
             // Check new messaged
@@ -120,6 +119,8 @@ public class App extends javax.swing.JFrame {
             );
             System.exit(0);
         }
+
+         */
 
     }
 
@@ -352,7 +353,7 @@ public class App extends javax.swing.JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                client.close(false);
+                // client.disconnect(false);
             }
 
         });

@@ -1,6 +1,5 @@
 package me.pari;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import org.hydev.logger.HyLogger;
@@ -13,21 +12,18 @@ public class Settings {
     // Logger
     private static final HyLogger LOGGER = new HyLogger("Settings");
 
-    // Connection info
     @Expose
     private String hostName;
 
     @Expose
     private Integer port;
 
-    // Auth user info
     @Expose
     private String username;
 
     @Expose
     private String authToken;
 
-    // All info
     private final File file;
 
     public Settings(String fileName) {

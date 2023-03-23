@@ -1,16 +1,20 @@
-package me.pari.connection;
+package me.pari.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 import me.pari.Settings;
+import me.pari.connection.Message;
+import me.pari.connection.Request;
+import me.pari.connection.Response;
+import me.pari.connection.Status;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-import java.net.SocketException;
-import java.util.*;
-import java.util.Timer;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
 
 public class Client extends AbstractClient {
@@ -22,13 +26,15 @@ public class Client extends AbstractClient {
     *
     * */
 
-    private final LinkedList<Response> responses = new LinkedList<>();
-    private final LinkedList<Message> messages = new LinkedList<>();
     private final Gson j = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private static final int RETRIES = 15;
 
     public Client(String hostname, int port) throws IOException {
         super(hostname, port);
+    }
+
+    public void connect() throws IOException {
+        super.connect();
     }
 
     private class UpdateAuthTokenTask extends TimerTask {
@@ -72,34 +78,6 @@ public class Client extends AbstractClient {
         Timer time = new Timer();
         UpdateAuthTokenTask st = new UpdateAuthTokenTask(sett);
         time.schedule(st, 20*60*1000, 20*60*1000);
-    }
-
-    public void responseUpdater() {
-        JSONObject j;
-        Gson g = new Gson();
-        while (isConnected.get()) {
-            try {
-                j = readJson();
-                LOGGER.log("New json" + j);
-
-                if (j.has("id"))
-                    responses.add(g.fromJson(j.toString(), Response.class));
-                else
-                    messages.add(g.fromJson(j.toString(), Message.class));
-
-            } catch (JsonSyntaxException ex) {
-                LOGGER.log("Bad Packet sent by server.");
-
-            } catch (SocketException ex) {
-                LOGGER.log("Client disconnected due to: " + ex.getMessage());
-
-                // Unexpected closed by thread
-                close(true);
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
     }
 
     private synchronized Response getResponse(int id) throws TimeoutException {
